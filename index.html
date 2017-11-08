@@ -47,7 +47,7 @@
 			let messages = element('messages');
 			let textarea = element('textarea');
 			let username = element('username');
-			let clear = element('clear');
+			let clearBtn = element('clear');
 
 			// Set default status
 			let statusDefault = status.textContent;
@@ -98,11 +98,28 @@
 
 				// Handle Input
 				textarea.addEventListener('keydown', (event) => {
-					if(event.which === 13) {
-						
+					if(event.which === 13 && event.shiftKey == false) {
+						// Emit to server input
+						socket.emit('input', {
+							name: username.value,
+							message: textarea.value
+						});
+
+						event.preventDefault();
 					}
 				})
+
+				// Handle Chat Clear
+				clearBtn.addEventListener('click', () => {
+					socket.emit('clear');
+				});
+
+				// Clear Message
+				socket.on('cleared', () => {
+					messages.textContent = '';
+				});
 			}
+
 		})();
 	</script>
 </body>
